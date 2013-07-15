@@ -1,0 +1,102 @@
+/**
+ * @package Network Shared Media
+ * @copyright BC Libraries Coop 2013
+ *
+ **/
+ 
+select#coop-nsm-shared-text-selector {
+	width: 75%;
+	font-size: 1.2em;
+	line-height: 1.2em;
+	padding-top: 3px;
+}	
+
+select#coop-nsm-shared-text-selector option {
+	margin-top: 3px;
+	vertical-align: bottom;
+}
+
+div.coop-nsm-shared-text-preview {
+	width: 95%;
+	min-height: 100px;
+	margin-top: 6px;
+	padding: 10px;
+	border: thin solid #999;
+	background-color: #fefefe;
+	overflow-y: scroll;
+}
+
+div.coop-nsm-overlay {
+	background-color: rgba(0,0,0,0.75);
+	padding: 20px;
+	margin: 0px auto;
+	width: 98%;
+	position: absolute;
+	top: 0;
+	z-index: 150000;
+}
+
+div.coop-nsm-content {
+	background-color: white;
+	padding: 20px;
+	margin: 40px auto 20px auto;
+	width: 95%;
+	min-width: 1000px;
+	z-index: 150001;
+}
+
+div.coop-nsm-header {
+	width: 100%;
+	height: 50px;
+}
+
+a#coop_nsm_close {
+	float: right;
+}
+
+div.coop-nsm-shared-images {
+/*	border: thin solid #666; */
+	width: 50%;
+	min-width: 500px;
+	height: 85%;
+	left: 0px;
+	float: left;
+	overflow-y: auto;
+}
+
+div.coop-nsm-item-meta {
+	border-left: thin solid #ccc;
+	background-color: #fcfcfc;
+	padding: 10px;
+	width: 45%;
+	min-width: 500px;
+	height: 85%;
+	right: 0px;
+	float:left;
+	overflow-y: auto;
+}
+
+
+div.coop-nsm-image-frame {
+	float: left;
+	margin: 10px;
+	padding: 10px;
+	background-color: #f9f9f9;
+	border: thin solid #ddd;
+	border-radius: 6px 6px;
+}
+
+img.coop-nsm-image {
+	margin: 10px;
+	width: 100px;
+	height: 100px;
+}
+
+div.coop-nsm-image-halo {
+	box-shadow: 3px 5px 6px rgba(120,120,180,0.5);
+}
+
+div.coop-nsm-item-meta-details {
+	border-bottom: thin solid #ccc;
+}
+
