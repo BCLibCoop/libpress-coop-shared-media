@@ -7,10 +7,10 @@
  **/
 /**
  * Plugin Name: Coop Shared Media
- * Description: Central media and pages repository interface.  NETWORK ACTIVATE.
+ * Description: Central media and pages repository interface. Install as MUST USE.
  * Author: Erik Stainsby, Roaring Sky Software
  * Author URI: http://roaringsky.ca/plugins/coop-shared-media/
- * Version: 0.1.0
+ * Version: 0.1.2
  
  **/
  
@@ -91,7 +91,7 @@ class Coop_Shared_Media {
 	
 	public function add_coop_shared_media_page() {	
 	
-		add_submenu_page( 'site-manager', 'Network Shared Media', 'Network Shared Media', 'edit_pages', 'network-shared-media', array(&$this,'admin_network_shared_media_page'));
+		add_media_page( 'Shared Media', 'Shared Media', 'manage_local_site', 'coop-shared-media', array(&$this,'admin_coop_shared_media_page'));
 	}
 	
 	
@@ -140,15 +140,6 @@ class Coop_Shared_Media {
 		$out[] = '<h2>Network Shared Media</h2>';
 		$out[] = '<p>Manage content available on the media server. This view is availlable to Super Administrators only.</p>';
 	
-		
-		/*
-
-		$wp_updir = wp_upload_dir();
-		$tmp = array();
-		$tmp[] = $this->walk($wp_updir['basedir']);
-		$out[] = implode( "\n",$tmp );
-*/
-
 		echo implode("\n",$out);
 		
 		$smt = new Shared_Media_Table();	
@@ -162,9 +153,9 @@ class Coop_Shared_Media {
 	/**
 	*	Regular management page
 	**/
-	public function admin_network_shared_media_page () {
+	public function admin_coop_shared_media_page () {
 		
-		if( ! current_user_can('edit_pages') ) die('You do not have required permissions to view this page');
+		if( ! current_user_can('manage_local_site') ) die('You do not have required permissions to view this page');
 		
 		$out = array();
 		
@@ -174,8 +165,8 @@ class Coop_Shared_Media {
 		$out[] = '<br>';
 		$out[] = '</div>';
 		
-		$out[] = '<h2>Network Shared Media Centre</h2>';
-		$out[] = '<p>Browse through content available on the media server. </p>';
+		$out[] = '<h2>Shared Media Centre</h2>';
+		$out[] = '<p>Browse through content available on the shared media server. </p>';
 		
 		$out[] = '<ul class="tab-container">';
 		$out[] = '<a href="#tab-one"><li class="tab" id="tab-one">Shared Images</li></a>';
