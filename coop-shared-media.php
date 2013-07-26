@@ -137,7 +137,7 @@ class Coop_Shared_Media {
 		$out[] = '<br>';
 		$out[] = '</div>';
 		
-		$out[] = '<h2>Network Shared Media</h2>';
+		$out[] = '<h2>Shared Media</h2>';
 		$out[] = '<p>Manage content available on the media server. This view is availlable to Super Administrators only.</p>';
 	
 		echo implode("\n",$out);
@@ -165,7 +165,7 @@ class Coop_Shared_Media {
 		$out[] = '<br>';
 		$out[] = '</div>';
 		
-		$out[] = '<h2>Shared Media Centre</h2>';
+		$out[] = '<h2>Shared Media</h2>';
 		$out[] = '<p>Browse through content available on the shared media server. </p>';
 		
 		$out[] = '<ul class="tab-container">';

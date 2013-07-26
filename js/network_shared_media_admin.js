@@ -23,6 +23,7 @@
 			self.server = 'http://cmss.libraries.coop';
 		
 			$('#coop-nsm-shared-text-selector').change( self.fetch_text );
+			$('#coop-nsm-apply-text').click( self.maybe_deselect_text_inclusion );
 		},
 		
 		add_nsm_button: function() {
@@ -71,6 +72,20 @@
 				
 			var img = $('<img src="' + self.server + '/wp-uploads/' + self.dir + imgfile + '" width="'+w+'" height="' + h + '" >');	
 			$('.coop-nsm-item-meta-img').empty().append( img );
+			
+		},
+		
+		
+		maybe_deselect_text_inclusion: function() {
+			
+			var sel = $('#coop-nsm-shared-text-selector option').filter(":selected");
+			var nsm_text_id = sel.val();
+			if( -1 == nsm_text_id && $('#coop-nsm-apply-text').is(':checked')) {
+				$('#coop-nsm-apply-text').click();
+			}
+			else {
+				$('#coop-nsm-shared-text-selector').val(-1);
+			}
 			
 		},
 		
@@ -129,8 +144,15 @@
 		*
 		**/
 		fetch_text: function() {
+		
 			var sel = $('#coop-nsm-shared-text-selector option').filter(":selected");
 			var nsm_text_id = sel.val();
+			
+			if( -1 == nsm_text_id ) {
+				self.maybe_deselect_text_inclusion();
+				return;
+			}
+			
 			var data = {
 				action: 'coop-nsm-fetch-preview',
 				nsm_text_id: nsm_text_id
@@ -145,6 +167,7 @@
 				}
 			});
 		},
+		
 		
 		/**
 		*	One time routine to set up 
