@@ -32,7 +32,7 @@ if(!class_exists('WP_List_Table')){
 **/
  
 if ( ! class_exists( 'Coop_Shared_Media' )) :
-	
+
 class Coop_Shared_Media {
 
 	public function __construct() {
@@ -43,7 +43,7 @@ class Coop_Shared_Media {
 			
 		if( is_admin()) {
 			
-			add_action( 'network_admin_menu', array(&$this,'add_network_admin_page' )); 		
+		//	add_action( 'network_admin_menu', array(&$this,'add_network_admin_page' )); 		
 			add_action( 'admin_enqueue_scripts', array( &$this, 'admin_enqueue_styles_scripts' ));
 			add_action( 'admin_menu', array( &$this,'add_coop_shared_media_page' ));
 			add_action( 'add_meta_boxes', array( &$this,'add_nsm_metaboxen' ));
