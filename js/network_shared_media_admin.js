@@ -238,9 +238,9 @@
 				metabox.append( btn );
 				metabox.hide();
 				
-			_content.append( hdr );
-			_content.append( imgbox );
-			_content.append( metabox );
+				_content.append( hdr );
+				_content.append( imgbox );
+				_content.append( metabox );
 			
 			$('.coop-nsm-meta-image-selector').change( self.set_preview_img );
 			
@@ -357,13 +357,11 @@
  
  
  
- 
- 
  jQuery().ready(function(){
 	window._nsm = jQuery().coop_nsm();
 	window._nsm.fetch_text();		// immediately fetch onload if text has been selected
 	
-	if( window.pagenow == 'page' || window.pagenow == 'post' ) {
+	if( window.pagenow == 'page' || window.pagenow == 'post' || window.pagenow == 'coop_highlight' ) {
 		jQuery(window).resize( _nsm.resize_mask );
 		window._nsm.add_nsm_button();
 	}

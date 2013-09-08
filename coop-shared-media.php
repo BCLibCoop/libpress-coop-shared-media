@@ -42,8 +42,7 @@ class Coop_Shared_Media {
 	public function _init() {
 			
 		if( is_admin()) {
-			
-		//	add_action( 'network_admin_menu', array(&$this,'add_network_admin_page' )); 		
+				
 			add_action( 'admin_enqueue_scripts', array( &$this, 'admin_enqueue_styles_scripts' ));
 			add_action( 'admin_menu', array( &$this,'add_coop_shared_media_page' ));
 			add_action( 'add_meta_boxes', array( &$this,'add_nsm_metaboxen' ));
@@ -209,8 +208,7 @@ class Coop_Shared_Media {
 
 		$out = array();
 		$out[] = '</div><!-- .tab .tab-two -->';
-		
-		
+	
 		$out[] = '</div><!-- .wrap -->';
 		
 		echo implode("\n",$out);
@@ -224,8 +222,10 @@ class Coop_Shared_Media {
 	**/
 	public function add_nsm_metaboxen() {
 	
-		add_meta_box( 'coop-nsm-shared-text-metabox', 'Shared Text Preview', array(&$this,'add_shared_text_viewer_metabox'), 'page', 'advanced', 'core' );
-		
+		 $screens = array( 'page', 'highlight' );
+		 foreach ( $screens as $screen ) {	
+			 add_meta_box( 'coop-nsm-shared-text-metabox', 'Shared Text Preview', array(&$this,'add_shared_text_viewer_metabox'), $screen, 'advanced', 'core' );
+		 }
 	}
 
 	/**
@@ -237,7 +237,7 @@ class Coop_Shared_Media {
 	*	to the shared media server. 
 	**/	
 	public function add_shared_text_viewer_metabox( $post ) {
-	  
+		  
 		//	This call fetches the wp_XX_postmeta table data
 		//	which links this $post to a wp_posts table entry in blog 1.
 		$nsm_text_id = get_post_meta( $post->ID, '_coop_nsm_shared_text_id', true );
@@ -246,6 +246,7 @@ class Coop_Shared_Media {
 		//	and list titles 
 		$sql = "SELECT p.ID, post_author, post_date, post_title, post_parent FROM wp_posts p
 				WHERE post_type='post' AND post_status = 'publish' ORDER BY post_title";
+		
 		global $wpdb;
 		$res = $wpdb->get_results($sql);
 		
@@ -263,6 +264,7 @@ class Coop_Shared_Media {
 		 >&nbsp;&nbsp;<label for="coop-nsm-apply-text">Use&nbsp;this&nbsp;text</label>';
 		
 		echo implode("\n",$out);
+		
 		echo '<div class="coop-nsm-shared-text-preview"></div>';
 		echo '<p>NOTE: The text shown here will appear in the page <em>before</em> any text you enter in the editor above.</p>';
 	}
@@ -270,6 +272,10 @@ class Coop_Shared_Media {
 	
 	public function coop_nsm_fetch_preview_callback() {
 		
+		if( ! array_key_exists( 'nsm_text_id',$_POST )) {
+			echo '{"result":"blocked"}';
+			die();
+		}
 		$nsm_text_id = $_POST['nsm_text_id'];
 	  
 		//	Select from wp_posts (onedomain) blog1
@@ -406,8 +412,9 @@ class Coop_Shared_Media {
 				update_post_meta($post_id,'_coop_nsm_shared_text_id','');	
 			}
 			
-			$nsm_text_id = $_POST['coop-nsm-shared-text-selector'];
-			
+			if( array_key_exists( 'coop-nsm-shared-text-selector', $_POST )) {
+				$nsm_text_id = $_POST['coop-nsm-shared-text-selector'];
+			}
 			if( isset($nsm_text_id) && $nsm_text_id > 0 ) {
 				
 				$prev_text_id = get_post_meta($post_id,'_coop_nsm_shared_text_id',true);
@@ -437,32 +444,34 @@ class Coop_Shared_Media {
 				add_action( 'save_post',array(&$this,'coop_nsm_shared_text_save_post'));
 			}
 			else {
-				$content = $_POST['content'];
+				if( array_key_exists('content',$_POST)) {
+					$content = $_POST['content'];
 				
-				if( FALSE !== strpos($content,'coop-nsm-shared-text') ) {
-					$search = '/\[.*\]/';
-					$content = preg_replace($search, '', $content);
-				//	error_log( 'after stripping: ' . $content );
+					if( FALSE !== strpos($content,'coop-nsm-shared-text') ) {
+						$search = '/\[.*\]/';
+						$content = preg_replace($search, '', $content);
+					//	error_log( 'after stripping: ' . $content );
+					}
+					
+					$my_post = array();
+					$my_post['ID'] = $post_id;
+					$my_post['post_content'] = $content;
+					
+					remove_action( 'save_post',array(&$this,'coop_nsm_shared_text_save_post'));
+	
+					wp_update_post($my_post);
+	
+					add_action( 'save_post',array(&$this,'coop_nsm_shared_text_save_post'));
 				}
-				
-				$my_post = array();
-				$my_post['ID'] = $post_id;
-				$my_post['post_content'] = $content;
-				
-				remove_action( 'save_post',array(&$this,'coop_nsm_shared_text_save_post'));
-
-				wp_update_post($my_post);
-
-				add_action( 'save_post',array(&$this,'coop_nsm_shared_text_save_post'));
-				
 			}
 		}
 	}
-	
-
 }
 
 if ( ! isset( $coop_shared_media ) )  {
+	
+	global $coop_shared_media;
+
 	require_once( 'inc/nsm-utils.php' );
 	require_once( 'inc/shared-media-table.php' );
 	require_once( 'inc/shared-text-table.php' );
