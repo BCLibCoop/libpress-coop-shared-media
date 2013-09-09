@@ -361,7 +361,7 @@
 	window._nsm = jQuery().coop_nsm();
 	window._nsm.fetch_text();		// immediately fetch onload if text has been selected
 	
-	if( window.pagenow == 'page' || window.pagenow == 'post' || window.pagenow == 'coop_highlight' ) {
+	if( window.pagenow == 'page' || window.pagenow == 'post' || window.pagenow == 'highlight' ) {
 		jQuery(window).resize( _nsm.resize_mask );
 		window._nsm.add_nsm_button();
 	}
