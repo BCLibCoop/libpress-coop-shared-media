@@ -64,7 +64,7 @@ class Shared_Media_Table extends WP_List_Table {
 	        
 	        $actions = array(
 	            'edit' => sprintf('<a href="http://%1$s/wp-admin/post.php?post=%2$s&action=%3$s">Edit</a>',$item['domain'],$item['ID'],'edit'),
-	            'delete'    => sprintf('<a href="http://%1$s/wp-admin/post.php?post=%2$s&action=%3$s">Delete Permanently</a>',$item['domain'],$item['ID'],'delete'),
+	   //         'delete'    => sprintf('<a href="http://%1$s/wp-admin/post.php?post=%2$s&action=%3$s">Delete Permanently</a>',$item['domain'],$item['ID'],'delete'),
 	            'view'    => sprintf('<a href="http://%1$s/%2$s">View</a>',$item['url'],$item['filename'])
 	        );
 	       

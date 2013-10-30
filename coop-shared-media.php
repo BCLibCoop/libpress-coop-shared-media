@@ -61,11 +61,12 @@ class Coop_Shared_Media {
 		
 	//	wp_enqueue_style( 'coop-nsm' );
 	//	wp_enqueue_script( 'coop-nsm-js' );
+	
 	}
 	
 	public function admin_enqueue_styles_scripts($hook) {
 	
-		if( 'post-new.php' !== $hook && 'post.php' !== $hook ) {
+		if( 'post-new.php' !== $hook && 'post.php' !== $hook && 'upload.php' !== $hook ) {
 			return;
 		}
 	
@@ -78,6 +79,7 @@ class Coop_Shared_Media {
 	}
 	
 	
+/*
 	public function add_network_admin_page() {
 		
 		if( ! current_user_can('manage_network')) {
@@ -86,16 +88,21 @@ class Coop_Shared_Media {
 		
 		add_menu_page( 'Network Shared Media', 'Network Shared Media', 'manage_network', 'network-shared-media', array(&$this,'network_shared_media_page'), '', 15 );
 	}
+*/
 	
 	
 	public function add_coop_shared_media_page() {	
 	
-		add_media_page( 'Shared Media', 'Shared Media', 'manage_local_site', 'coop-shared-media', array(&$this,'admin_coop_shared_media_page'));
+		add_media_page( 'Shared Media', 'Shared Media Images', 'manage_local_site', 'coop-shared-media-images', array(&$this,'admin_coop_shared_media_images_page'));
+		add_media_page( 'Shared Media', 'Shared Media Text', 'manage_local_site', 'coop-shared-media-text', array(&$this,'admin_coop_shared_media_text_page'));
 	}
 	
 	
 	public function walk( $node )
 	{
+		//
+		// defined WP upload dir
+		//
 		$updir = wp_upload_dir();
 		
 		$files = scandir($node);
@@ -120,8 +127,9 @@ class Coop_Shared_Media {
 	
 	
 	/**
-	*	Super Admin page
+	*	Super Admin page	- NOT IN USE
 	**/
+/*
 	public function network_shared_media_page () {
 		
 		if( ! current_user_can('mangage_network') ) {
@@ -143,16 +151,17 @@ class Coop_Shared_Media {
 		
 		$smt = new Shared_Media_Table();	
 		$smt->prepare_items();
-		$smt->display();
+		$smt->display();	// flushes directly - does not 'return' content 
 			
 		echo '</div><!-- .wrap -->';
-		
 	}
+*/
+	
 		
 	/**
 	*	Regular management page
 	**/
-	public function admin_coop_shared_media_page () {
+	public function admin_coop_shared_media_images_page () {
 		
 		if( ! current_user_can('manage_local_site') ) die('You do not have required permissions to view this page');
 		
@@ -164,38 +173,61 @@ class Coop_Shared_Media {
 		$out[] = '<br>';
 		$out[] = '</div>';
 		
-		$out[] = '<h2>Shared Media</h2>';
+		$out[] = '<h2>Shared Media - Images</h2>';
 		$out[] = '<p>Browse through content available on the shared media server. </p>';
-		
-		$out[] = '<ul class="tab-container">';
-		$out[] = '<a href="#tab-one"><li class="tab" id="tab-one">Shared Images</li></a>';
-		$out[] = '<a href="#tab-two"><li class="tab" id="tab-two">Shared Texts</li></a>';
-		$out[] = '</ul><!-- .tab-container -->';
-		
+				
 		$out[] = '<div class="tab tab-one">';
-		$out[] = '<a name="#tab-one"></a>';
 		$out[] = '<h2>Shared images</h2>';
 		
 		echo implode("\n",$out);
 		
 		$smt = new Shared_Media_Table();
 		$smt->prepare_items();
-		$smt->display();
+		$smt->display();	// flushes directly - does not 'return' content
 		
 		$out = array();
 		$out[] = '</div><!-- .tab .tab-one -->';
+		
+		/*
+		$wp_updir = wp_upload_dir();
+		$tmp = array();
+		$tmp[] = $this->walk($wp_updir['basedir']);
+		$out[] = implode( "\n",$tmp );
+		
+*/
 
+		$out = array();
+		
+		$out[] = '</div><!-- .wrap -->';
+		
+		echo implode("\n",$out);
+	}
+	
+	
+	
+	public function admin_coop_shared_media_text_page () {
+		
+		if( ! current_user_can('manage_local_site') ) die('You do not have required permissions to view this page');
+		
+		$out = array();
+		
+		$out[] = '<div class="wrap">';
+		
+		$out[] = '<div id="icon-options-general" class="icon32">';
+		$out[] = '<br>';
+		$out[] = '</div>';
+		
+		$out[] = '<h2>Shared Media - Text</h2>';
+		$out[] = '<p>Browse through content available on the shared media server. </p>';
+						
 		$out[] = '<div class="tab tab-two">';
-		$out[] = '<p>&nbsp;</p>';
-		$out[] = '<a name="#tab-two"></a>';
 		$out[] = '<h2>Shared boilerplate text</h2>';
 		
 		echo implode("\n",$out);
 		
-		
 		$stt = new Shared_Text_Table();
 		$stt->prepare_items();
-		$stt->display();
+		$stt->display();	// flushes directly - does not 'return' content
 		
 		
 		/*
@@ -215,6 +247,9 @@ class Coop_Shared_Media {
 	}
 	
 	
+	
+	
+	
 	/**
 	*	adds meta box widgets to the Edit post forms of client sites.
 	*
@@ -228,6 +263,7 @@ class Coop_Shared_Media {
 		 }
 	}
 
+
 	/**
 	*	This metabox widget does not provide editing context:
 	*	it is a read-only preview of remote sourced text to be included in the published page.
@@ -239,7 +275,7 @@ class Coop_Shared_Media {
 	public function add_shared_text_viewer_metabox( $post ) {
 		  
 		//	This call fetches the wp_XX_postmeta table data
-		//	which links this $post to a wp_posts table entry in blog 1.
+		//		which links this $post to a wp_posts table entry in blog 1.
 		$nsm_text_id = get_post_meta( $post->ID, '_coop_nsm_shared_text_id', true );
 		
 		//	Select from wp_posts (onedomain) blog1
