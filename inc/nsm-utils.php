@@ -46,24 +46,19 @@ class Network_Shared_Media_Utils {
         **/
         
         $sql = "SELECT p.ID, post_author, post_date, post_title, post_parent, post_mime_type, guid, u.user_login
-        		FROM wp_posts p JOIN $wpdb->users u ON p.post_author=u.ID WHERE post_type='attachment' ORDER BY post_title";
+        		FROM wp_posts p JOIN wp_users u ON p.post_author=u.ID WHERE post_type='attachment' ORDER BY post_title";
         $res = $wpdb->get_results($sql);
         
         
-        $sql = "SELECT * FROM wp_postmeta WHERE meta_key = '_wp_attachment_metadata'";
+        $sql = "SELECT * FROM wp_postmeta WHERE meta_key IN ('_wp_attachment_metadata','_wp_attached_file') ";
     	$meta = $wpdb->get_results($sql, ARRAY_A);
     	
     	$m = array();
     	foreach( $meta as $k => $v ) {
-        	$m[$v['post_id']] = maybe_unserialize($v['meta_value']);
+    		$m[$v['post_id']] = maybe_unserialize($v['meta_value']);
     	}
     	
-    /*
-	echo '<pre>';
-    	var_dump($m);
-    	echo '</pre>';
-*/
-    	        
+      	        
         $data = array();
         $updir = wp_upload_dir();
         
@@ -85,7 +80,7 @@ class Network_Shared_Media_Utils {
 		        'domain'	=> $one_domain,
 		        'url'		=> $one_domain . '/wp-uploads',
 		        'thumbnail'	=> $r->guid,
-		        'filename'  => $m[$r->ID]['file'],
+		        'filename'  => ($r->post_mime_type == 'application/pdf') ? $m[$r->ID] : $m[$r->ID]['file'],
 		        'meta' 		=> $m[$r->ID]
 	        );
         }

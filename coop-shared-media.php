@@ -10,7 +10,7 @@
  * Description: Central media and pages repository interface. Install as MUST USE.
  * Author: Erik Stainsby, Roaring Sky Software
  * Author URI: http://roaringsky.ca/plugins/coop-shared-media/
- * Version: 0.1.2
+ * Version: 0.1.6
  
  **/
  
@@ -44,7 +44,7 @@ class Coop_Shared_Media {
 		if( is_admin()) {
 				
 			add_action( 'admin_enqueue_scripts', array( &$this, 'admin_enqueue_styles_scripts' ));
-			add_action( 'admin_menu', array( &$this,'add_coop_shared_media_page' ));
+			add_action( 'admin_menu', array( &$this,'add_coop_shared_media_menu' ));
 			add_action( 'add_meta_boxes', array( &$this,'add_nsm_metaboxen' ));
 			add_action( 'save_post',array(&$this,'coop_nsm_shared_text_save_post'));
 			add_action( 'wp_ajax_coop-nsm-fetch-preview', array( &$this, 'coop_nsm_fetch_preview_callback' ));
@@ -91,7 +91,7 @@ class Coop_Shared_Media {
 */
 	
 	
-	public function add_coop_shared_media_page() {	
+	public function add_coop_shared_media_menu() {	
 	
 		add_media_page( 'Shared Media', 'Shared Media Images', 'manage_local_site', 'coop-shared-media-images', array(&$this,'admin_coop_shared_media_images_page'));
 		add_media_page( 'Shared Media', 'Shared Media Text', 'manage_local_site', 'coop-shared-media-text', array(&$this,'admin_coop_shared_media_text_page'));
@@ -193,8 +193,7 @@ class Coop_Shared_Media {
 		$tmp = array();
 		$tmp[] = $this->walk($wp_updir['basedir']);
 		$out[] = implode( "\n",$tmp );
-		
-*/
+		*/
 
 		$out = array();
 		
@@ -235,8 +234,7 @@ class Coop_Shared_Media {
 		$tmp = array();
 		$tmp[] = $this->walk($wp_updir['basedir']);
 		$out[] = implode( "\n",$tmp );
-		
-*/
+		*/
 
 		$out = array();
 		$out[] = '</div><!-- .tab .tab-two -->';
@@ -373,7 +371,6 @@ class Coop_Shared_Media {
     	$m = maybe_unserialize($meta);
 		
 		/*
-
 		foreach( $m as $k => $l ) {
 			if( is_array($l)) {
 				foreach( $l as $p => $v ) {
@@ -391,8 +388,8 @@ class Coop_Shared_Media {
 				error_log($k .' :: '. $l );
 			}
 		}
-		
 		*/
+		
 		
 		$path = explode("/",$m['file']);
 		$folder = $path[0].'/'.$path[1] .'/';
@@ -443,10 +440,10 @@ class Coop_Shared_Media {
 			if( array_key_exists('coop-nsm-apply-text',$_POST)) {
 				$apply_text_flag = $_POST['coop-nsm-apply-text'];
 			}
-			
 			if ( !isset($apply_text_flag) ) {
-				update_post_meta($post_id,'_coop_nsm_shared_text_id','');	
+				update_post_meta($post_id,'_coop_nsm_shared_text_id','');
 			}
+			
 			
 			if( array_key_exists( 'coop-nsm-shared-text-selector', $_POST )) {
 				$nsm_text_id = $_POST['coop-nsm-shared-text-selector'];

@@ -49,8 +49,16 @@ class Shared_Media_Table extends WP_List_Table {
       
     
    	function column_thumb($item){
-  	   	
-        //Return the thumbnail image
+  	  	//Return the thumbnail image
+  	  	
+  	  	if( $item['mime_type'] == 'application/pdf' ) {
+	  	  	return sprintf('<img src="%1$s" class="smc-thumbnail" alt="%2$s" %3$s>',
+            	includes_url('/images/crystal/document.png'),
+            	$item['title'],
+				'width="65"'
+			);
+  	  	}
+  	  	
         return sprintf('<img src="%1$s" class="smc-thumbnail" alt="%2$s" %3$s>',
             $item['thumbnail'],  // returns guid
             $item['title'],
@@ -77,8 +85,8 @@ class Shared_Media_Table extends WP_List_Table {
 	        );
 	    }
 	    else {
-	    	$actions = array('view' => sprintf('<a href="http://%1$s/%2$s">View</a>',$item['url'],$item['filename'])
-	        );
+	    
+	    	$actions = array('view' => sprintf('<a href="http://%1$s/%2$s">View</a>',$item['url'],$item['filename']));
 	    
 	        //Return the contents
 	        return sprintf('%1$s<br/><span class="smc-mime-type">%2$s</span>',
