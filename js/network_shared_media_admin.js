@@ -20,7 +20,7 @@
 	
 		init: function(){
 		
-			self.server = 'http://cmss.libraries.coop';
+			self.server = 'http://libpress.libraries.coop';
 		
 			$('#coop-nsm-shared-text-selector').change( self.fetch_text );
 			$('#coop-nsm-apply-text').click( self.maybe_deselect_text_inclusion );
