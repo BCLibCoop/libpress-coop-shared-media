@@ -1,0 +1,25 @@
+{
+    "name": "bclibcoop/coop-shared-media",
+    "description": "Central media and pages repository interface",
+    "type": "wordpress-plugin",
+    "license": "GPL-2.0-or-later",
+    "keywords": [
+        "wordpress",
+        "wordpress-plugin"
+    ],
+    "homepage": "https://bc.libraries.coop/",
+    "authors": [
+        {
+            "name": "Eric Stainsby",
+            "email": "eric.stainsby@roaringsky.ca"
+        },
+        {
+            "name": "Sam Edwards",
+            "email": "sam.edwards@bc.libraries.coop"
+        }
+    ],
+    "require": {
+        "php": ">=7.0",
+        "composer/installers": "^1.0"
+    }
+}

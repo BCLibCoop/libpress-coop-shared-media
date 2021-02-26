@@ -1,93 +1,60 @@
-<?php defined('ABSPATH') || die('No direct access' );
+<?php
 
 /**
- * @package Network Shared Media Utilities
- * @component Shared Media Table 
- * @copyright BC Libraries Coop 2013
+ * Utility functions
+ *
+ * @package           BCLibCoop\NetworkSharedMediaUtils
+ * @author            Erik Stainsby <eric.stainsby@roaringsky.ca>
+ * @author            Sam Edwards <sam.edwards@bc.libraries.coop>
+ * @copyright         2013-2021 BC Libraries Cooperative
+ * @license           GPL-2.0-or-later
  **/
- 
-/**
-*
-*	
-*
-**/
 
-if ( ! class_exists( 'Network_Shared_Media_Utils' )) :
-	
-class Network_Shared_Media_Utils {
+namespace BCLibCoop;
 
-	public function __construct() {
-		add_action( 'init', array( &$this, '_init' ));
-	}
-
-	public function _init() {
-		
-	}
-
-
-	/**
-	*	This routine is intentionally hardwired to use Blog 1.
-	*	Blog 1 is defined as the media server. 
-    *	All shared media / text is owned by blog 1.	
-    *	All urls must resolve to the hostname of blog 1.
-	*
-	**/
-
-	public function getImageData() {
-   
-		global $wpdb;
-		
-        $sql = "SELECT domain FROM wp_blogs WHERE blog_id = 1";
-        $one_domain = $wpdb->get_var($sql);
-  
+class NetworkSharedMediaUtils
+{
+    /**
+     * This routine is intentionally hardwired to use Blog 1.
+     * Blog 1 is defined as the media server.
+     * All shared media / text is owned by blog 1.
+     * All urls must resolve to the hostname of blog 1.
+     *
+     **/
+    public static function getImageData()
+    {
         /**
-        *	This select is HARD-CODED to select ONLY from wp_posts
-        *	IT IS DELIBERATELY NOT NETWORK AWARE.
-        **/
-        
-        $sql = "SELECT p.ID, post_author, post_date, post_title, post_parent, post_mime_type, guid, u.user_login
-        		FROM wp_posts p JOIN wp_users u ON p.post_author=u.ID WHERE post_type='attachment' ORDER BY post_title";
-        $res = $wpdb->get_results($sql);
-        
-        
-        $sql = "SELECT * FROM wp_postmeta WHERE meta_key IN ('_wp_attachment_metadata','_wp_attached_file') ";
-    	$meta = $wpdb->get_results($sql, ARRAY_A);
-    	
-    	$m = array();
-    	foreach( $meta as $k => $v ) {
-    		$m[$v['post_id']] = maybe_unserialize($v['meta_value']);
-    	}
-    	
-      	        
-        $data = array();
-        $updir = wp_upload_dir();
-        
-        foreach( $res as $r )
-        {   
-        	// this follows the current blog_id - not what we want - 
-        	// $m = get_post_meta($r->ID,'_wp_attachment_metadata');
-        	
-        	// so we do this instead ...
-        	
-	        $data[] = array( 
-	        	'ID' 		=> $r->ID,
-		        'author' 	=> $r->post_author,
-		        'author_name' => $r->user_login,
-		        'date'		=> substr($r->post_date,0,10),
-		        'title' 	=> $r->post_title,
-		        'attached'	=> $r->post_parent,
-		        'mime_type' => $r->post_mime_type,
-		        'domain'	=> $one_domain,
-		        'url'		=> $one_domain . '/wp-uploads',
-		        'thumbnail'	=> $r->guid,
-		        'filename'  => ($r->post_mime_type == 'application/pdf') ? $m[$r->ID] : $m[$r->ID]['file'],
-		        'meta' 		=> $m[$r->ID]
-	        );
+         * This select is HARD-CODED to select ONLY from wp_posts
+         **/
+
+        // Get uploads dir of blog 1
+        switch_to_blog(1);
+
+        $shared_medias = get_posts([
+            'post_type' => 'attachment',
+            'posts_per_page' => -1,
+            'orderby' => 'post_title',
+            'order' => 'ASC',
+        ]);
+
+        $data = [];
+
+        foreach ($shared_medias as $shared_media) {
+            $data[] = [
+                'ID'     => $shared_media->ID,
+                'author'   => $shared_media->post_author,
+                'author_name' => get_the_author_meta('display_name', $shared_media->post_author),
+                'date'    => substr($shared_media->post_date, 0, 10),
+                'title'   => $shared_media->post_title,
+                'attached'  => $shared_media->post_parent,
+                'mime_type' => $shared_media->post_mime_type,
+                'url'    => wp_get_attachment_url($shared_media->ID),
+                'thumbnail'  => wp_get_attachment_image_url($shared_media->ID, 'thumbnail'),
+            ];
         }
-        
+
+        restore_current_blog();
+
         return $data;
     }
-    
 }
-
-endif; /* ! class_exists */
