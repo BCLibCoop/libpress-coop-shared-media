@@ -261,6 +261,12 @@ class CoopSharedMedia
         ]);
     }
 
+    /**
+     * Returns all attachments from blog 1 as JSON for insertion modal
+     *
+     * @todo: The entire modal could probaly be replaced by a wp.media instance
+     * with a similar custom library query
+     */
     public function fetchSharedImagesCallback()
     {
         $data = NetworkSharedMediaUtils::getImageData();

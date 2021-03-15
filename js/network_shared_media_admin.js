@@ -322,10 +322,11 @@
 
       var img = anchor + '<img class="' + alignment + '" src="' + self.dir + imgfile + '" width="' + w + '" height="' + h + '" >' + tail;
 
-      var content = tinyMCE.activeEditor.getContent();
-      content = content + "\n" + img;
-
-      tinyMCE.activeEditor.setContent(content);
+      if (tinyMCE.activeEditor) {
+        tinymce.activeEditor.execCommand('mceInsertContent', false, img);
+      } else {
+        alert("Please switch to the Visual Editor to insert shared media");
+      }
 
       self.clear_preview_img();
       self.remove_overlay();

@@ -55,7 +55,7 @@ class SharedMediaTable extends \WP_List_Table
 
         return sprintf(
             '<img src="%1$s" class="smc-thumbnail" alt="%2$s" %3$s>',
-            $item['thumbnail'],  // returns guid
+            $item['thumbnail'],
             $item['title'],
             'width="100"'
         );
