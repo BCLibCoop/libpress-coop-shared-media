@@ -18,7 +18,7 @@
  * @wordpress-plugin
  * Plugin Name:       Coop Shared Media
  * Description:       Central media and pages repository interface
- * Version:           1.0.0
+ * Version:           1.0.2
  * Network:           true
  * Requires at least: 5.2
  * Requires PHP:      7.0
@@ -215,6 +215,7 @@ class CoopSharedMedia
             'posts_per_page' => -1,
             'orderby' => 'post_title',
             'order' => 'ASC',
+            'lang' => '', // Avoid Polylang adding terms to this query
         ]);
         restore_current_blog();
 
