@@ -12,13 +12,13 @@
  * @package           BCLibCoop\CoopSharedMedia
  * @author            Erik Stainsby <eric.stainsby@roaringsky.ca>
  * @author            Sam Edwards <sam.edwards@bc.libraries.coop>
- * @copyright         2013-2021 BC Libraries Cooperative
+ * @copyright         2013-2022 BC Libraries Cooperative
  * @license           GPL-2.0-or-later
  *
  * @wordpress-plugin
  * Plugin Name:       Coop Shared Media
  * Description:       Central media and pages repository interface
- * Version:           1.0.2
+ * Version:           1.0.3
  * Network:           true
  * Requires at least: 5.2
  * Requires PHP:      7.0
@@ -70,8 +70,18 @@ class CoopSharedMedia
             return;
         }
 
-        wp_enqueue_script('coop-nsm-admin-js', plugins_url('/js/network_shared_media_admin.js', __FILE__), ['jquery']);
-        wp_enqueue_style('coop-nsm-admin', plugins_url('/css/network_shared_media_admin.css', __FILE__), false);
+        wp_enqueue_script(
+            'coop-nsm-admin-js',
+            plugins_url('/js/network_shared_media_admin.js', __FILE__),
+            ['jquery'],
+            get_plugin_data(__FILE__, false, false)['Version']
+        );
+        wp_enqueue_style(
+            'coop-nsm-admin',
+            plugins_url('/css/network_shared_media_admin.css', __FILE__),
+            [],
+            get_plugin_data(__FILE__, false, false)['Version']
+        );
     }
 
     public function addCoopSharedMediaMenu()
@@ -111,11 +121,9 @@ class CoopSharedMedia
 
         $out[] = '<div class="wrap">';
 
-        $out[] = '<div id="icon-options-general" class="icon32">';
-        $out[] = '<br>';
-        $out[] = '</div>';
+        $out[] = '<h1 class="wp-heading-inline">Shared Media - Images</h1>';
+        $out[] = '<hr class="wp-header-end">';
 
-        $out[] = '<h2>Shared Media - Images</h2>';
         $out[] = '<p>Browse through content available on the shared media server. </p>';
 
         $out[] = '<div class="tab tab-one">';
@@ -151,11 +159,9 @@ class CoopSharedMedia
 
         $out[] = '<div class="wrap">';
 
-        $out[] = '<div id="icon-options-general" class="icon32">';
-        $out[] = '<br>';
-        $out[] = '</div>';
+        $out[] = '<h1 class="wp-heading-inline">Shared Media - Text</h1>';
+        $out[] = '<hr class="wp-header-end">';
 
-        $out[] = '<h2>Shared Media - Text</h2>';
         $out[] = '<p>Browse through content available on the shared media server. </p>';
 
         $out[] = '<div class="tab tab-two">';
