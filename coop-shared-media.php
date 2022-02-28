@@ -18,7 +18,7 @@
  * @wordpress-plugin
  * Plugin Name:       Coop Shared Media
  * Description:       Central media and pages repository interface
- * Version:           1.0.3
+ * Version:           1.0.4
  * Network:           true
  * Requires at least: 5.2
  * Requires PHP:      7.0
@@ -352,15 +352,11 @@ class CoopSharedMedia
     {
         global $post;
 
-        extract(shortcode_atts(array(
-            'id' => -1
-        ), $atts));
+        extract(shortcode_atts([
+            'id' => (int) get_post_meta($post->ID, '_coop_nsm_shared_text_id', true)
+        ], $atts));
 
-        if ($id == null || (int) $id == -1) {
-            $id = get_post_meta($post->ID, '_coop_nsm_shared_text_id', true);
-        }
-
-        if ($id == null || $id < 1) {
+        if (empty($id) || $id < 1) {
             return "[ missing id of text to include ]";
         }
 
@@ -385,7 +381,7 @@ class CoopSharedMedia
             }
 
             if (array_key_exists('coop-nsm-shared-text-selector', $_POST)) {
-                $nsm_text_id = (int) $_POST['coop-nsm-shared-text-selector'];
+                $nsm_text_id = (int) sanitize_text_field($_POST['coop-nsm-shared-text-selector']);
             }
 
             if (isset($nsm_text_id) && $nsm_text_id > 0) {
