@@ -12,7 +12,7 @@
  * @license           GPL-2.0-or-later
  **/
 
-namespace BCLibCoop;
+namespace BCLibCoop\SharedMedia;
 
 class SharedTextTable extends \WP_List_Table
 {

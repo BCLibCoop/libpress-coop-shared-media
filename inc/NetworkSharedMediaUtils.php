@@ -10,7 +10,7 @@
  * @license           GPL-2.0-or-later
  **/
 
-namespace BCLibCoop;
+namespace BCLibCoop\SharedMedia;
 
 class NetworkSharedMediaUtils
 {
