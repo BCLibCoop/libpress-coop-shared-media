@@ -4,7 +4,7 @@
  * Coop Shared Media
  *
  * A plugin to list shared text and media from the home network blog, and
- * provide an interface to insert the media, or include the next content by the
+ * provide an interface to insert the media, or include the text content by the
  * use of a shortcode.
  *
  * PHP Version 7
