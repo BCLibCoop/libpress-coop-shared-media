@@ -86,48 +86,48 @@
       };
 
       $.post(ajaxurl, data)
-      .always(function () {
-        $('.coop-nsm-item-meta-img').empty();
-        $('.coop-nsm-meta-image-selector').empty();
-        $('.coop-nsm-item-meta-imgname').empty();
-        $('.coop-nsm-item-meta-imgdate').empty();
-        $('.coop-nsm-item-meta-imgsize').empty();
-        $('#coop-nsm-img-insert-btn').prop('disabled', true);
-      })
-      .done(function (res) {
-        if (res.result === 'success') {
-          self.date = res.date;
-          self.dir = res.folder;
-          self.fs = res.fullsize;
-          self.ms = res.midsize;
-          self.ts = res.thumb;
+        .always(function () {
+          $('.coop-nsm-item-meta-img').empty();
+          $('.coop-nsm-meta-image-selector').empty();
+          $('.coop-nsm-item-meta-imgname').empty();
+          $('.coop-nsm-item-meta-imgdate').empty();
+          $('.coop-nsm-item-meta-imgsize').empty();
+          $('#coop-nsm-img-insert-btn').prop('disabled', true);
+        })
+        .done(function (res) {
+          if (res.result === 'success') {
+            self.date = res.date;
+            self.dir = res.folder;
+            self.fs = res.fullsize;
+            self.ms = res.midsize;
+            self.ts = res.thumb;
 
-          $('.coop-nsm-item-meta-imgname').append(self.fs.file);
-          $('.coop-nsm-item-meta-imgdate').append(self.date);
-          $('.coop-nsm-item-meta-imgsize').append(self.fs.width + ' x ' + self.fs.height);
+            $('.coop-nsm-item-meta-imgname').append(self.fs.file);
+            $('.coop-nsm-item-meta-imgdate').append(self.date);
+            $('.coop-nsm-item-meta-imgsize').append(self.fs.width + ' x ' + self.fs.height);
 
-          var sm, med, lrg;
+            var sm, med, lrg;
 
-          if (self.ts.file !== '') {
-            sm = $('<option value="' + self.ts.file + '" data-w="' + self.ts.width + '" data-h="' + self.ts.height + '">Small ' + self.ts.width + ' x ' + self.ts.height + '</option>');
-            $('.coop-nsm-meta-image-selector').append(sm);
+            if (self.ts.file !== '') {
+              sm = $('<option value="' + self.ts.file + '" data-w="' + self.ts.width + '" data-h="' + self.ts.height + '">Small ' + self.ts.width + ' x ' + self.ts.height + '</option>');
+              $('.coop-nsm-meta-image-selector').append(sm);
+            }
+
+            if (self.ms.file !== '') {
+              med = $('<option value="' + self.ms.file + '" data-w="' + self.ms.width + '" data-h="' + self.ms.height + '">Medium ' + self.ms.width + ' x ' + self.ms.height + '</option>');
+              $('.coop-nsm-meta-image-selector').append(med);
+            }
+
+            if (self.fs.file !== '') {
+              lrg = $('<option value="' + self.fs.file + '" data-w="' + self.fs.width + '" data-h="' + self.fs.height + '">Full ' + self.fs.width + ' x ' + self.fs.height + '</option>');
+              $('.coop-nsm-meta-image-selector').append(lrg);
+            }
+
+            $('#coop-nsm-img-insert-btn').prop('disabled', false);
+
+            self.set_preview_img();
           }
-
-          if (self.ms.file !== '') {
-            med = $('<option value="' + self.ms.file + '" data-w="' + self.ms.width + '" data-h="' + self.ms.height + '">Medium ' + self.ms.width + ' x ' + self.ms.height + '</option>');
-            $('.coop-nsm-meta-image-selector').append(med);
-          }
-
-          if (self.fs.file !== '') {
-            lrg = $('<option value="' + self.fs.file + '" data-w="' + self.fs.width + '" data-h="' + self.fs.height + '">Full ' + self.fs.width + ' x ' + self.fs.height + '</option>');
-            $('.coop-nsm-meta-image-selector').append(lrg);
-          }
-
-          $('#coop-nsm-img-insert-btn').prop('disabled', false);
-
-          self.set_preview_img();
-        }
-      });
+        });
     },
 
     /**
@@ -345,7 +345,7 @@ jQuery().ready(function () {
   window._nsm.fetch_text(); // immediately fetch onload if text has been selected
 
   if (window.pagenow == 'page' || window.pagenow == 'post' || window.pagenow == 'highlight') {
-    jQuery(window).resize(_nsm.resize_mask);
+    jQuery(window).on('resize', _nsm.resize_mask);
     window._nsm.add_nsm_button();
   }
 });
