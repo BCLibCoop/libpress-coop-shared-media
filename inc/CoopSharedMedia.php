@@ -98,13 +98,14 @@ class CoopSharedMedia
         $out[] = '<div class="tab tab-one">';
         $out[] = '<h2>Shared images</h2>';
 
-        echo implode("\n", $out);
+        ob_start();
 
         $smt = new SharedMediaTable();
         $smt->prepare_items();
         $smt->display();  // flushes directly - does not 'return' content
 
-        $out = [];
+        $out[] = ob_get_clean();
+
         $out[] = '</div><!-- .tab .tab-one -->';
 
         $out[] = '</div><!-- .wrap -->';
@@ -130,13 +131,14 @@ class CoopSharedMedia
         $out[] = '<div class="tab tab-two">';
         $out[] = '<h2>Shared boilerplate text</h2>';
 
-        echo implode("\n", $out);
+        ob_start();
 
         $stt = new SharedTextTable();
         $stt->prepare_items();
         $stt->display();  // flushes directly - does not 'return' content
 
-        $out = [];
+        $out[] = ob_get_clean();
+
         $out[] = '</div><!-- .tab .tab-two -->';
 
         $out[] = '</div><!-- .wrap -->';
