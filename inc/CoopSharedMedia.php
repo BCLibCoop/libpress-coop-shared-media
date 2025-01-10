@@ -360,14 +360,14 @@ class CoopSharedMedia
 
     public function sharedTextSavePost($post_id, $post, $update)
     {
+        if (wp_is_post_revision($post_id)) {
+            return;
+        }
+
         // Only supported on page or highlight
         if (!in_array(get_post_type($post_id), ['page', 'highlight'])) {
             // Try and clean up posts that we previously added meta to
             delete_post_meta($post_id, $this->meta_key);
-            return;
-        }
-
-        if (wp_is_post_revision($post_id)) {
             return;
         }
 
