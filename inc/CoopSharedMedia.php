@@ -56,6 +56,9 @@ class CoopSharedMedia
             [],
             get_plugin_data(SHAREDMEDIA_PLUGIN_FILE, false, false)['Version']
         );
+
+        $ajax_nonce = wp_create_nonce(self::class);
+        wp_localize_script('coop-nsm-admin-js', 'coop_nsm', ['nonce' => $ajax_nonce]);
     }
 
     public function addCoopSharedMediaMenu()
@@ -215,20 +218,28 @@ class CoopSharedMedia
 
     public function fetchPreviewCallback()
     {
-        if (!array_key_exists('nsm_text_id', $_POST)) {
+        check_ajax_referer(self::class);
+
+        if (empty($_POST['nsm_text_id'])) {
             wp_send_json(['result' => 'blocked']);
         }
 
-        $nsm_text_id = (int) $_POST['nsm_text_id'];
-
         switch_to_blog(1);
-        $content = get_the_content(null, false, $nsm_text_id);
+
+        $post = get_post((int) $_POST['nsm_text_id']);
+
+        if ($post && get_post_type($post) === 'post' && get_post_status($post) === 'publish') {
+            $return = [
+                'result' => 'success',
+                'nsm_preview' => get_the_content(null, false, $post),
+            ];
+        } else {
+            $return = ['result' => 'blocked'];
+        }
+
         restore_current_blog();
 
-        wp_send_json([
-            'result' => 'success',
-            'nsm_preview' => $content,
-        ]);
+        wp_send_json($return);
     }
 
     /**
@@ -239,6 +250,8 @@ class CoopSharedMedia
      */
     public function fetchSharedImagesCallback()
     {
+        check_ajax_referer(self::class);
+
         $data = NetworkSharedMediaUtils::getImageData();
 
         $out = ['images' => []];
@@ -257,6 +270,8 @@ class CoopSharedMedia
 
     public function fetchImageMetadataCallback()
     {
+        check_ajax_referer(self::class);
+
         $img_id = (int) $_POST['img_id'];
 
         switch_to_blog(1);
@@ -269,46 +284,47 @@ class CoopSharedMedia
             $folder = trailingslashit(str_replace($img_url_basename, '', $img_url));
             $date = substr($img->post_date, 0, 10);
         }
+
         restore_current_blog();
 
-        if ($img && $img->post_type === 'attachment') {
-            $out = [
-                'result' => 'success',
-                'fullsize' => [
-                    'file' => $img_url_basename,
-                    'width' => $m['width'],
-                    'height' => $m['height'],
-                ],
-                'midsize' => [
-                    'file' => '',
-                ],
-                'thumb' => [
-                    'file' => '',
-                ],
-                'folder' => $folder,
-                'date' => $date,
-            ];
-
-            if (!empty($m['sizes']['medium'])) {
-                $out['midsize'] = [
-                    'file' => $m['sizes']['medium']['file'],
-                    'width' => $m['sizes']['medium']['width'],
-                    'height' => $m['sizes']['medium']['height'],
-                ];
-            }
-
-            if (!empty($m['sizes']['thumbnail'])) {
-                $out['thumb'] = [
-                    'file' => $m['sizes']['thumbnail']['file'],
-                    'width' => $m['sizes']['thumbnail']['width'],
-                    'height' => $m['sizes']['thumbnail']['height'],
-                ];
-            }
-
-            wp_send_json($out);
+        if (!$img || $img->post_type !== 'attachment') {
+            wp_send_json(['result' => 'failed']);
         }
 
-        wp_send_json(['result' => 'failed']);
+        $out = [
+            'result' => 'success',
+            'fullsize' => [
+                'file' => $img_url_basename,
+                'width' => $m['width'],
+                'height' => $m['height'],
+            ],
+            'midsize' => [
+                'file' => '',
+            ],
+            'thumb' => [
+                'file' => '',
+            ],
+            'folder' => $folder,
+            'date' => $date,
+        ];
+
+        if (!empty($m['sizes']['medium'])) {
+            $out['midsize'] = [
+                'file' => $m['sizes']['medium']['file'],
+                'width' => $m['sizes']['medium']['width'],
+                'height' => $m['sizes']['medium']['height'],
+            ];
+        }
+
+        if (!empty($m['sizes']['thumbnail'])) {
+            $out['thumb'] = [
+                'file' => $m['sizes']['thumbnail']['file'],
+                'width' => $m['sizes']['thumbnail']['width'],
+                'height' => $m['sizes']['thumbnail']['height'],
+            ];
+        }
+
+        wp_send_json($out);
     }
 
     public function sharedTextShortcodeHandler($atts)
@@ -320,12 +336,23 @@ class CoopSharedMedia
         ], $atts));
 
         if (empty($id) || $id < 1) {
-            return "[ missing id of text to include ]";
+            return '<!-- Invalid Shared Text Post ID -->';
         }
 
         // Select from wp_posts (onedomain) blog1
         switch_to_blog(1);
-        $content = get_the_content(null, false, $id);
+
+        $shared_post = get_post($id);
+        if (
+            !$shared_post
+            || get_post_type($shared_post) !== 'post'
+            || get_post_status($shared_post) !== 'publish'
+        ) {
+            $content = '<!-- Invalid Shared Text Post ID -->';
+        } else {
+            $content = get_the_content(null, false, $shared_post);
+        }
+
         restore_current_blog();
 
         return $content;
@@ -352,7 +379,7 @@ class CoopSharedMedia
 
         $old_content = $new_content = $post->post_content;
         $prev_text_id = get_post_meta($post_id, $this->meta_key, true);
-        $search ="/\[{$this->shortcode}\s+?id=.*?%d.*?\]\\n?/";
+        $search = "/\[{$this->shortcode}\s+?id=.*?%d.*?\]\\n?/";
         $replace = "[%s id=\"%d\"]\n";
 
         if ($apply_text_flag && $nsm_text_id) {

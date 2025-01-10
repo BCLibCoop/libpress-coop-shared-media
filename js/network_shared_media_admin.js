@@ -30,7 +30,8 @@
 
     fetch_shared_images: function () {
       var data = {
-        action: 'coop-nsm-fetch-shared-images'
+        action: 'coop-nsm-fetch-shared-images',
+        _ajax_nonce: window.coop_nsm.nonce,
       };
 
       $.post(ajaxurl, data).done(function (res) {
@@ -82,7 +83,8 @@
       var img_id = $(div).data('img-id');
       var data = {
         action: 'coop-nsm-fetch-image-metadata',
-        img_id: img_id
+        img_id: img_id,
+        _ajax_nonce: window.coop_nsm.nonce,
       };
 
       $.post(ajaxurl, data)
@@ -136,17 +138,24 @@
     *
     **/
     fetch_text: function () {
-      var sel = $('#coop-nsm-shared-text-selector option').filter(":selected");
+      var dropdown = $('#coop-nsm-shared-text-selector option');
+
+      if (dropdown.length === 0) {
+        return;
+      }
+
+      var sel = dropdown.filter(":selected");
       var nsm_text_id = sel.val();
 
-      if (-1 == nsm_text_id) {
+      if (0 == nsm_text_id) {
         self.maybe_deselect_text_inclusion();
         return;
       }
 
       var data = {
         action: 'coop-nsm-fetch-preview',
-        nsm_text_id: nsm_text_id
+        nsm_text_id: nsm_text_id,
+        _ajax_nonce: window.coop_nsm.nonce,
       }
 
       $.post(ajaxurl, data).done(function (res) {
