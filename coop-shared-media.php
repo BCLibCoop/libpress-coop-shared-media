@@ -18,7 +18,7 @@
  * @wordpress-plugin
  * Plugin Name:       Coop Shared Media
  * Description:       Central media and pages repository interface
- * Version:           1.2.0
+ * Version:           1.2.1
  * Network:           true
  * Requires at least: 5.2
  * Requires PHP:      7.0
