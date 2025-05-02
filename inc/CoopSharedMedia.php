@@ -160,7 +160,9 @@ class CoopSharedMedia
             [$this, 'addSharedTextViewerMetabox'],
             ['page', 'highlight'],
             'advanced',
-            'core'
+            'core',
+            // Declare this as "back compat", aka, it won't show in the block editor
+            ['__back_compat_meta_box' => true]
         );
     }
 
